@@ -1,5 +1,4 @@
-import re
-import string
+
 from app import app
 from db import mysql
 from flask import jsonify, flash, request, render_template, redirect, url_for
@@ -38,20 +37,15 @@ def get_updates():
     # display_tweets()
     return resp
 
-def display_tweets():
-    print(os.path.dirname(__file__))
-    with open('C:\\Users\\abrah\\Documents\\test-api\\template\\home.html', 'r') as f:
-        lines = f.readlines()
-        soup = Soup('<div class="post"></div>')
 
-        for i, line in enumerate(lines[1::]):
-            new_tag = soup.new_tag('p', **{'class':'none'})
-            new_tag.string = line
-            soup.append(new_tag)
-        print(soup)
-    return
-
-
-
+@app.route("/delete/<int:tweet_id>", methods=['DELETE'])
+def delte_tweet(tweet_id):
+    id = int(tweet_id)
+    print(id)
+    cursor = mysql.connection.cursor()
+    cursor.execute(''' DELETE FROM tweets WHERE tweet_id =%s ''', [id])
+    mysql.connection.commit()
+    cursor.close()
+    return redirect(url_for('home'))
 
 app.run(host='127.0.0.1', port=5000)
